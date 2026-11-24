@@ -1,0 +1,74 @@
+{% load static %}
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Мята — онлайн-аптека{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'pharmacy/styles.css' %}">
+  <script src="{% static 'pharmacy/site.js' %}" defer></script>
+</head>
+<body>
+  <div class="top-strip">Заботливо и понятно — для вашего здоровья</div>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="{% url 'pharmacy:home' %}">мята <small>онлайн-аптека</small></a>
+      <nav class="main-menu" aria-label="Основное меню">
+        <a href="{% url 'pharmacy:home' %}">Главная</a>
+        <a href="{% url 'pharmacy:catalog' %}">Каталог</a>
+        <a href="{% url 'pharmacy:about' %}">О нас</a>
+        {% if user.is_authenticated %}<a href="{% url 'pharmacy:orders' %}">Мои заказы</a>{% endif %}
+      </nav>
+      <div class="header-actions">
+        <a class="header-link" href="{% url 'pharmacy:cart' %}"><img class="small-icon" src="{% static 'pharmacy/images/basket.svg' %}" width="20" height="20" alt="">Корзина</a>
+        {% if user.is_authenticated %}
+          <a class="header-link" href="{% url 'pharmacy:profile' %}">Профиль</a>
+          <form action="{% url 'pharmacy:logout' %}" method="post" class="inline-form">{% csrf_token %}<button type="submit" class="header-link">Выйти</button></form>
+        {% else %}
+          <a class="header-link" href="{% url 'pharmacy:login' %}"><img class="small-icon" src="{% static 'pharmacy/images/user.svg' %}" width="20" height="20" alt="">Войти</a>
+        {% endif %}
+      </div>
+      <details class="mobile-menu">
+        <summary>Меню</summary>
+        <nav aria-label="Мобильное меню">
+          <a href="{% url 'pharmacy:home' %}">Главная</a>
+          <a href="{% url 'pharmacy:catalog' %}">Каталог</a>
+          <a href="{% url 'pharmacy:about' %}">О нас</a>
+          <a href="{% url 'pharmacy:cart' %}">Корзина</a>
+          {% if user.is_authenticated %}
+            <a href="{% url 'pharmacy:profile' %}">Профиль</a>
+            <a href="{% url 'pharmacy:orders' %}">Мои заказы</a>
+            {% if user.is_staff %}<a href="{% url 'pharmacy:staff' %}">Администрирование</a>{% endif %}
+            <form action="{% url 'pharmacy:logout' %}" method="post">{% csrf_token %}<button type="submit" class="menu-button">Выйти</button></form>
+          {% else %}
+            <a href="{% url 'pharmacy:login' %}">Войти</a>
+            <a href="{% url 'pharmacy:register' %}">Регистрация</a>
+          {% endif %}
+        </nav>
+      </details>
+    </div>
+  </header>
+
+  <main class="container">
+    {% if messages %}
+      <div class="messages" aria-live="polite">
+        {% for message in messages %}<p class="notice {% if message.tags == 'error' %}notice-error{% endif %}">{{ message }}</p>{% endfor %}
+      </div>
+    {% endif %}
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-content">
+      <div><strong class="footer-logo">мята</strong><p>Учебный проект онлайн-аптеки.</p></div>
+      <nav aria-label="Нижнее меню">
+        <a href="{% url 'pharmacy:catalog' %}">Каталог</a>
+        <a href="{% url 'pharmacy:about' %}">О нас</a>
+        {% if user.is_authenticated %}<a href="{% url 'pharmacy:orders' %}">Мои заказы</a>{% endif %}
+        {% if user.is_staff %}<a href="{% url 'pharmacy:staff' %}">Администратору</a>{% endif %}
+      </nav>
+      <small>© 2026 «Мята». Данные и цены — учебные примеры.</small>
+    </div>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}{{ medicine.name }} — Мята{% endblock %}
+{% block content %}
+<nav class="breadcrumbs"><a href="{% url 'pharmacy:home' %}">Главная</a> / <a href="{% url 'pharmacy:catalog' %}">Каталог</a> / {{ medicine.name }}</nav>
+<h1 class="page-title">{{ medicine.name }} {{ medicine.dosage }}</h1>
+<div class="product-layout">
+  <section class="panel product-picture" aria-label="Фото препарата">
+    <img src="{% static 'pharmacy/images/medicine-' %}{{ medicine.pk }}.png" width="270" height="290" alt="Упаковка {{ medicine.name }}">
+  </section>
+  <section class="panel">
+    <h2>О препарате</h2>
+    <p>{{ medicine.description|default:'Описание пока не добавлено.'|truncatechars:400 }}</p>
+    <dl class="details-list">
+      <div><dt>Действующее вещество</dt><dd>{{ medicine.substance }}</dd></div>
+      <div><dt>Дозировка</dt><dd>{{ medicine.dosage }}</dd></div>
+      <div><dt>Форма выпуска</dt><dd>{{ medicine.form }}</dd></div>
+      <div><dt>Производитель</dt><dd>{{ medicine.manufacturer.name }}</dd></div>
+      <div><dt>Отпуск</dt><dd>{% if medicine.prescription_required %}По рецепту{% else %}Без рецепта{% endif %}</dd></div>
+    </dl>
+  </section>
+  <aside class="panel buy-panel">
+    <h2>Стоимость</h2>
+    <p class="big-price">{{ medicine.price|floatformat:2 }} ₽</p>
+    <form method="post" action="{% url 'pharmacy:cart_add' medicine.pk %}">{% csrf_token %}<button class="btn full" type="submit">В корзину</button></form>
+    <h3>Наличие в аптеках</h3>
+    {% for stock in stocks %}
+      <p class="stock"><strong>{{ stock.pharmacy.name }}</strong><span>{{ stock.quantity }} шт.</span><small>{{ stock.pharmacy.address }}</small></p>
+    {% empty %}<p class="muted">Пока нет в наличии.</p>{% endfor %}
+  </aside>
+</div>
+<section class="section" aria-labelledby="analog-title">
+  <h2 id="analog-title">Аналоги с тем же действующим веществом</h2>
+  <div class="medicine-grid">
+    {% for analog in analogs %}{% with medicine=analog %}{% include '_medicine_card.html' %}{% endwith %}
+    {% empty %}<p>Других препаратов с веществом «{{ medicine.substance }}» пока нет.</p>{% endfor %}
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}Панель администратора — Мята{% endblock %}
+{% block content %}
+<nav class="breadcrumbs"><a href="{% url 'pharmacy:home' %}">Главная</a> / Администрирование</nav>
+<h1 class="page-title">Панель администратора</h1>
+<p class="muted">Управление данными онлайн-аптеки.</p>
+<div class="stats">
+  <article class="panel stat"><h2>Препаратов</h2><strong>{{ stats.medicines }}</strong></article>
+  <article class="panel stat"><h2>Аптек</h2><strong>{{ stats.pharmacies }}</strong></article>
+  <article class="panel stat"><h2>Заказов</h2><strong>{{ stats.orders }}</strong></article>
+</div>
+<section class="section">
+  <div class="section-heading"><h2>Препараты</h2><a class="btn" href="{% url 'admin:index' %}">Открыть Django Admin</a></div>
+  <div class="panel table-wrap">
+    <table><thead><tr><th>Название</th><th>Действующее вещество</th><th>Форма</th><th>Цена</th><th>Отпуск</th></tr></thead><tbody>
+      {% for medicine in medicines %}
+        <tr><td>{{ medicine.name }}</td><td>{{ medicine.substance }}</td><td>{{ medicine.form }}</td><td>{{ medicine.price|floatformat:2 }} ₽</td><td>{% if medicine.prescription_required %}По рецепту{% else %}Свободный{% endif %}</td></tr>
+      {% empty %}<tr><td colspan="5">Препаратов пока нет.</td></tr>{% endfor %}
+    </tbody></table>
+  </div>
+</section>
+<section class="section" aria-labelledby="add-title">
+  <h2 id="add-title">Добавить препарат</h2>
+  <form method="post" action="{% url 'pharmacy:medicine_add' %}" class="panel form">
+    {% csrf_token %}
+    {% for field in form %}
+      <div class="form-field"><label for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}{% for error in field.errors %}<p class="field-error">{{ error }}</p>{% endfor %}</div>
+    {% endfor %}
+    <button class="btn" type="submit">Добавить препарат</button>
+  </form>
+  <p class="hint">Изменить остатки, производителей и аптеки можно через <a class="text-link" href="{% url 'admin:index' %}">Django Admin</a>.</p>
+</section>
+{% endblock %}

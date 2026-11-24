@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}Корзина — Мята{% endblock %}
+{% block content %}
+<nav class="breadcrumbs"><a href="{% url 'pharmacy:home' %}">Главная</a> / Корзина</nav>
+<h1 class="page-title">Корзина</h1>
+{% if items %}
+<div class="cart-layout">
+  <section class="panel" aria-label="Товары в корзине" id="cart-list">
+    {% for item in items %}
+      <article class="cart-row" id="cart-row-{{ item.medicine.pk }}">
+        <div class="cart-name"><h2><a href="{% url 'pharmacy:product' item.medicine.pk %}">{{ item.medicine.name }}</a></h2><p class="muted">{{ item.medicine.dosage }} {{ item.medicine.form|lower }}</p></div>
+        <form class="qty-form" method="post" action="{% url 'pharmacy:cart_update' item.medicine.pk %}" data-ajax-cart>
+          {% csrf_token %}
+          <label for="qty-{{ item.medicine.pk }}">Количество</label>
+          <input id="qty-{{ item.medicine.pk }}" name="quantity" type="number" value="{{ item.quantity }}" min="0" max="99" required>
+          <button type="submit" class="btn btn-small">Обновить</button>
+        </form>
+        <strong class="line-price" data-line-total>{{ item.subtotal|floatformat:2 }} ₽</strong>
+      </article>
+    {% endfor %}
+  </section>
+  <aside class="panel cart-summary">
+    <h2>Ваш заказ</h2>
+    <p class="summary-line">Итого: <strong id="cart-total">{{ total|floatformat:2 }} ₽</strong></p>
+    <p class="muted">Стоимость пересчитывается по актуальным ценам из базы.</p>
+    <a class="btn full" href="{% url 'pharmacy:checkout' %}">Оформить заказ</a>
+    <a class="text-link" href="{% url 'pharmacy:catalog' %}">Продолжить покупки</a>
+  </aside>
+</div>
+{% else %}
+<section class="panel"><p>Корзина пока пуста.</p><a class="btn" href="{% url 'pharmacy:catalog' %}">В каталог</a></section>
+{% endif %}
+{% endblock %}

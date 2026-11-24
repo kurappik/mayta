@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Главная — Мята{% endblock %}
+{% block content %}
+<section class="hero">
+  <div>
+    <p class="eyebrow">ВАША ЗАБОТА — НАШ ПРИОРИТЕТ</p>
+    <h1>Забота о здоровье <span class="accent">рядом с вами</span></h1>
+    <p class="lead">Найдите нужный препарат, посмотрите аналоги и выберите аптеку для самовывоза.</p>
+    <form action="{% url 'pharmacy:search' %}" method="get" class="search">
+      <img class="small-icon" src="{% static 'pharmacy/images/search.svg' %}" width="20" height="20" alt="">
+      <input type="search" name="q" placeholder="Название или действующее вещество" aria-label="Поиск препарата" required>
+      <button type="submit" class="btn">Найти</button>
+    </form>
+    <p class="hint">Например: парацетамол, ибупрофен, цетиризин</p>
+  </div>
+  <div class="hero-art">
+    <img src="{% static 'pharmacy/images/hero.png' %}" width="240" height="240" alt="Иллюстрация онлайн-аптеки">
+  </div>
+</section>
+
+<section class="section" aria-labelledby="benefits-title">
+  <h2 id="benefits-title">Почему удобно с «Мятой»</h2>
+  <div class="benefits">
+    <article class="benefit">
+      <img src="{% static 'pharmacy/images/substance.svg' %}" width="42" height="42" loading="lazy" alt="">
+      <div><h3>Поиск по веществу</h3><p>Находите препараты и аналоги.</p></div>
+    </article>
+    <article class="benefit">
+      <img src="{% static 'pharmacy/images/pharmacy.svg' %}" width="42" height="42" loading="lazy" alt="">
+      <div><h3>Забрать рядом</h3><p>Выберите удобную аптеку.</p></div>
+    </article>
+    <article class="benefit">
+      <img src="{% static 'pharmacy/images/prescription.svg' %}" width="42" height="42" loading="lazy" alt="">
+      <div><h3>Проверка рецепта</h3><p>Понятный статус заказа.</p></div>
+    </article>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="sections-title">
+  <h2 id="sections-title">Категории</h2>
+  <div class="simple-categories">
+    {% for form in forms %}
+      <a class="category" href="{% url 'pharmacy:catalog' %}?form={{ form|urlencode }}">
+        <img src="{% static 'pharmacy/images/category.svg' %}" width="40" height="40" loading="lazy" alt="">
+        <strong>{{ form }}</strong>
+      </a>
+    {% empty %}
+      <p>Категории появятся после добавления препаратов.</p>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="section" aria-labelledby="popular-title">
+  <div class="section-heading"><h2 id="popular-title">Часто ищут</h2><a class="text-link" href="{% url 'pharmacy:catalog' %}">Весь каталог</a></div>
+  <div class="medicine-grid">
+    {% for medicine in medicines %}{% include '_medicine_card.html' %}
+    {% empty %}<p>Препараты появятся здесь после заполнения базы.</p>{% endfor %}
+  </div>
+</section>
+
+<section class="section info-banner" aria-labelledby="order-info-title">
+  <h2 id="order-info-title">Как получить заказ</h2>
+  <p>Найдите препарат, положите в корзину и выберите аптеку. Если препарат рецептурный, приложите рецепт для проверки фармацевтом.</p>
+  <a href="{% url 'pharmacy:catalog' %}" class="btn">Перейти в каталог</a>
+</section>
+{% endblock %}

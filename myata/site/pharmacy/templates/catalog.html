@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block title %}Каталог — Мята{% endblock %}
+{% block content %}
+<nav class="breadcrumbs"><a href="{% url 'pharmacy:home' %}">Главная</a> / Каталог</nav>
+<h1 class="page-title">Каталог препаратов</h1>
+<p class="muted">Поиск по названию и действующему веществу</p>
+<div class="catalog-layout">
+  {% include '_filters.html' %}
+  <section aria-label="Результаты каталога" class="catalog-main">
+    <div id="catalog-results" aria-live="polite">{% include '_product_results.html' %}</div>
+  </section>
+</div>
+{% endblock %}

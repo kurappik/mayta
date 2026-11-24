@@ -1,0 +1,16 @@
+{% load static %}
+<article class="medicine-card">
+  <a class="medicine-photo" href="{% url 'pharmacy:product' medicine.pk %}">
+    <img src="{% static 'pharmacy/images/medicine.png' %}"alt="Изображение препарата" width="140" height="130" loading="lazy" class="product-photo">
+  </a>
+  <div class="medicine-info">
+    {% if medicine.prescription_required %}<span class="tag tag-orange">По рецепту</span>{% else %}<span class="tag">Без рецепта</span>{% endif %}
+    <h3><a href="{% url 'pharmacy:product' medicine.pk %}">{{ medicine.name }}</a></h3>
+    <p class="muted">{{ medicine.dosage }} {{ medicine.form|lower }}</p>
+    <p class="price">{{ medicine.price|floatformat:2 }} ₽</p>
+    <form method="post" action="{% url 'pharmacy:cart_add' medicine.pk %}">
+      {% csrf_token %}
+      <button class="btn full" type="submit">В корзину</button>
+    </form>
+  </div>
+</article>

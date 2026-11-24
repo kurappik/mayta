@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %}Мои заказы — Мята{% endblock %}
+{% block content %}
+<nav class="breadcrumbs"><a href="{% url 'pharmacy:profile' %}">Личный кабинет</a> / Мои заказы</nav>
+<h1 class="page-title">Мои заказы</h1>
+{% for order in orders %}
+<article class="panel order-card">
+  <div class="section-heading"><h2>Заказ {{ order.number }}</h2><strong class="tag">{{ order.status }}</strong></div>
+  <p class="muted">{{ order.date|date:'d.m.Y H:i' }} · Самовывоз: {{ order.pharmacy.name }}</p>
+  <ul class="plain-list">{% for item in order.items.all %}<li>{{ item.medicine.name }} × {{ item.quantity }} — {{ item.total_price|floatformat:2 }} ₽</li>{% endfor %}</ul>
+  {% for prescription in order.prescriptions.all %}
+    <p>Рецепт №{{ prescription.number }}: <strong>{{ prescription.status }}</strong> · <a class="text-link" href="{% url 'pharmacy:prescription_file' prescription.pk %}">Скачать файл</a></p>
+  {% endfor %}
+  <p class="hint">Этапы заказа: создан → проверка рецепта (если требуется) → подтверждён → готов к выдаче.</p>
+</article>
+{% empty %}
+<section class="panel"><p>Пока нет заказов.</p><a class="btn" href="{% url 'pharmacy:catalog' %}">Найти препарат</a></section>
+{% endfor %}
+{% endblock %}

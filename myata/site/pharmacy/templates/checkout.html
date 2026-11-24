@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}Оформление заказа — Мята{% endblock %}
+{% block content %}
+<nav class="breadcrumbs"><a href="{% url 'pharmacy:cart' %}">Корзина</a> / Оформление</nav>
+<h1 class="page-title">Оформление заказа</h1>
+<div class="checkout-layout">
+  <section class="panel">
+    <h2>Контактные данные и самовывоз</h2>
+    {% if not has_pharmacies %}<p class="notice notice-error">Нет одной аптеки, в которой сейчас доступны все товары в нужном количестве. Измени корзину.</p>{% endif %}
+    <form method="post" enctype="multipart/form-data" class="form" novalidate>
+      {% csrf_token %}
+      {% for error in form.non_field_errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+      {% for field in form %}
+          <div class="form-field">
+            <label for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %} *{% endif %}</label>
+            {{ field }}
+            {% for error in field.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+          </div>
+      {% endfor %}
+      {% if needs_recipe %}<p class="hint">Для рецептурного препарата обязательно загрузить рецепт. Файл проверяет фармацевт. Форматы: PDF, JPG, PNG до 10 МБ.</p>{% endif %}
+      <button class="btn" type="submit" {% if not has_pharmacies %}disabled{% endif %}>Подтвердить заказ</button>
+    </form>
+  </section>
+  <aside class="panel cart-summary">
+    <h2>Состав заказа</h2>
+    {% for item in items %}<p class="summary-line">{{ item.medicine.name }} × {{ item.quantity }} <strong>{{ item.subtotal|floatformat:2 }} ₽</strong></p>{% endfor %}
+    <p class="summary-line total-line">Итого <strong>{{ total|floatformat:2 }} ₽</strong></p>
+    <p class="hint">Получение — самовывоз. Оплата на сайте в учебном проекте не выполняется.</p>
+  </aside>
+</div>
+{% endblock %}

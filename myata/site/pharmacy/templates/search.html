@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block title %}Результаты поиска — Мята{% endblock %}
+{% block content %}
+<nav class="breadcrumbs"><a href="{% url 'pharmacy:home' %}">Главная</a> / Поиск</nav>
+<h1 class="page-title">Результаты поиска</h1>
+<form class="search" action="{% url 'pharmacy:search' %}" method="get">
+  <input type="search" name="q" value="{{ q }}" placeholder="Название или действующее вещество" aria-label="Поисковый запрос">
+  <button type="submit" class="btn">Найти</button>
+</form>
+<div class="section" id="catalog-results">{% include '_product_results.html' %}</div>
+{% endblock %}
